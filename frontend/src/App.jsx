@@ -45,8 +45,13 @@ import { API_BASE_URL } from './config';
 
 export default function App() {
   const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem('proctor_active_user');
-    return saved ? JSON.parse(saved) : null;
+    try {
+      const saved = localStorage.getItem('proctor_active_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      console.warn('Failed to parse proctor_active_user:', e);
+      return null;
+    }
   });
 
   const [departments, setDepartments] = useState([]);
