@@ -1,7 +1,23 @@
 # 🛡️ ProctorLens-AI
 
-> **Advanced AI-Powered Real-Time Anti-Cheat Camera Proctoring System**  
-> Built with FastAPI, OpenCV, MediaPipe, React 18, and Tailwind CSS.
+> **Advanced Autonomous Anti-Cheat Online Examination & AI Proctoring Ecosystem**  
+> Built for Sri Krishna Institute of Technology (SKIT Bangalore).  
+> **Live Standalone Website:** [https://rakshitad22.github.io/anti-cheat-online-exam-proctoring/](https://rakshitad22.github.io/anti-cheat-online-exam-proctoring/)
+
+---
+
+## 🌐 Live Deployment & Standalone Mode (Zero Backend Required)
+
+The frontend contains an **Autonomous Client-Side Mock & Offline Engine** (`mockService.js`), allowing the complete examination portal, 3-stage tests (MCQ, Coding, Zam AI Viva), AI evaluations, and Admin Dashboard to run **100% in the browser without needing a backend server**.
+
+### How to Activate GitHub Pages (1-Minute Setup):
+1. Navigate to: **[Repository Settings > Pages](https://github.com/rakshitad22/anti-cheat-online-exam-proctoring/settings/pages)**
+2. Under **Build and deployment > Source**, select:
+   * **`Deploy from a branch`**
+   * Branch: **`gh-pages`** | Folder: **`/ (root)`**
+   * Click **Save**.
+3. Your live application will be instantly accessible at:
+   👉 **`https://rakshitad22.github.io/anti-cheat-online-exam-proctoring/`**
 
 ---
 
