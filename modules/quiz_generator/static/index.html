@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Factskoot Autonomous AI Quiz & Assessment Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .glass-card {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .glass-input {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: white;
+    }
+    .glass-input:focus {
+      border-color: #06b6d4;
+      outline: none;
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-cyan-500 selection:text-black relative overflow-x-hidden">
+
+  <!-- Background Glow Orbs -->
+  <div class="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+    <div class="absolute -top-32 -left-32 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="border-b border-white/10 glass-card sticky top-0 z-40 px-6 py-4">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-purple-600 flex items-center justify-center font-bold text-lg text-white shadow-lg shadow-cyan-500/25">
+          <i data-lucide="sparkles" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg font-black text-white tracking-tight">Factskoot AI Quiz Generator</h1>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 font-bold">Problem Statement 1</span>
+          </div>
+          <p class="text-xs text-slate-400">Autonomous Pedagogical Syllabus Ingestion & Intelligent Auto-Grading Engine</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs Switcher -->
+      <div class="flex items-center gap-1 bg-slate-900/80 p-1.5 rounded-2xl border border-white/10 text-xs font-bold">
+        <button id="tabBtnTeacher" onclick="switchTab('teacher')" class="px-4 py-2 rounded-xl transition flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md">
+          <i data-lucide="graduation-cap" class="w-4 h-4"></i> Teacher Dashboard
+        </button>
+        <button id="tabBtnStudent" onclick="switchTab('student')" class="px-4 py-2 rounded-xl transition flex items-center gap-2 text-slate-400 hover:text-white">
+          <i data-lucide="pen-tool" class="w-4 h-4"></i> Student Quiz Taking
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Viewport -->
+  <main class="flex-1 max-w-7xl mx-auto w-full p-6 sm:p-8">
+
+    <!-- ------------------------------------------------------------- -->
+    <!-- VIEW 1: TEACHER DASHBOARD                                     -->
+    <!-- ------------------------------------------------------------- -->
+    <div id="viewTeacher" class="space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left: Syllabus & Document Ingestion -->
+        <div class="lg:col-span-2 glass-card rounded-3xl p-6 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-white/10">
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i data-lucide="file-text" class="w-5 h-5 text-cyan-400"></i>
+              Syllabus & Chapter Document Ingestion
+            </h2>
+            <span class="text-[11px] font-mono text-slate-400">PDF or Raw Text</span>
+          </div>
+
+          <!-- File Upload Zone -->
+          <div class="border-2 border-dashed border-white/20 hover:border-cyan-400/50 rounded-2xl p-6 text-center transition cursor-pointer bg-slate-900/40 relative">
+            <input type="file" id="pdfFileInput" accept=".pdf,.txt" class="absolute inset-0 opacity-0 cursor-pointer" onchange="handleFileUpload(event)">
+            <i data-lucide="upload-cloud" class="w-10 h-10 text-cyan-400 mx-auto mb-2"></i>
+            <p class="text-sm font-bold text-white" id="uploadStatusText">Upload Chapter PDF or Syllabus Document</p>
+            <p class="text-xs text-slate-400 mt-1">Drag and drop .pdf or .txt file here (auto-parses text)</p>
+          </div>
+
+          <div class="flex items-center gap-2 text-xs text-slate-400 my-2">
+            <div class="h-px bg-white/10 flex-1"></div>
+            <span>OR PASTE SYLLABUS DIRECTLY</span>
+            <div class="h-px bg-white/10 flex-1"></div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1.5">Syllabus / Chapter Content:</label>
+            <textarea id="rawTextInput" rows="8" class="w-full rounded-2xl p-4 text-xs font-mono glass-input" placeholder="Paste chapter notes, lecture syllabus, or technical learning objectives here..."></textarea>
+          </div>
+        </div>
+
+        <!-- Right: Generator Configuration -->
+        <div class="glass-card rounded-3xl p-6 space-y-4 flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-white/10">
+              <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i data-lucide="sliders" class="w-5 h-5 text-purple-400"></i>
+                Assessment Parameters
+              </h3>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Subject / Topic Name:</label>
+              <input type="text" id="topicInput" class="w-full rounded-xl px-3.5 py-2.5 text-xs glass-input" placeholder="e.g. Distributed Operating Systems">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Difficulty Level:</label>
+              <select id="difficultyInput" class="w-full rounded-xl px-3.5 py-2.5 text-xs glass-input">
+                <option value="Beginner">Beginner (Foundational definitions)</option>
+                <option value="Intermediate" selected>Intermediate (Concepts & analysis)</option>
+                <option value="Advanced">Advanced (Critical architecture & scenarios)</option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold text-slate-300 mb-1">MCQs Count:</label>
+                <input type="number" id="mcqCountInput" value="6" min="1" max="15" class="w-full rounded-xl px-3.5 py-2.5 text-xs glass-input font-mono">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-300 mb-1">Short Answers:</label>
+                <input type="number" id="shortCountInput" value="4" min="1" max="10" class="w-full rounded-xl px-3.5 py-2.5 text-xs glass-input font-mono">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1 flex items-center justify-between">
+                <span>Optional LLM API Key:</span>
+                <span class="text-[10px] text-cyan-400">Gemini / OpenAI</span>
+              </label>
+              <input type="password" id="apiKeyInput" class="w-full rounded-xl px-3.5 py-2.5 text-xs glass-input font-mono" placeholder="AIzaSy... (Leave empty for Smart NLP engine)">
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-white/10">
+            <button id="generateBtn" onclick="generateQuiz()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 hover:opacity-90 active:scale-95 text-white font-black text-xs font-mono uppercase tracking-wider shadow-lg shadow-cyan-500/30 transition flex items-center justify-center gap-2">
+              <i data-lucide="zap" class="w-4 h-4"></i>
+              <span id="generateBtnText">Synthesize Balanced Assessment</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Generated Questions Preview & Edit Container -->
+      <div id="quizPreviewSection" class="hidden glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-white/10">
+          <div>
+            <h3 class="text-xl font-black text-white" id="previewQuizTitle">Generated Assessment</h3>
+            <p class="text-xs text-slate-400" id="previewQuizMeta">10 Questions synthesized • 24 Marks Total</p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="saveAndPublishQuiz()" class="px-5 py-2 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-bold font-mono hover:bg-emerald-500/30 transition flex items-center gap-1.5">
+              <i data-lucide="check-circle" class="w-4 h-4"></i> Save Assessment
+            </button>
+            <button onclick="switchTab('student')" class="px-5 py-2 rounded-xl bg-cyan-500 text-black text-xs font-bold font-mono hover:opacity-90 transition flex items-center gap-1.5">
+              <i data-lucide="arrow-right" class="w-4 h-4"></i> Take Quiz as Student
+            </button>
+          </div>
+        </div>
+
+        <div id="questionsContainer" class="space-y-4"></div>
+      </div>
+    </div>
+
+    <!-- ------------------------------------------------------------- -->
+    <!-- VIEW 2: STUDENT QUIZ TAKING & AUTO-GRADING                     -->
+    <!-- ------------------------------------------------------------- -->
+    <div id="viewStudent" class="hidden space-y-6">
+      
+      <!-- Quiz Header Banner -->
+      <div class="glass-card rounded-3xl p-6 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="text-[10px] font-mono px-2.5 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold uppercase" id="studentTopicBadge">General Assessment</span>
+          <h2 class="text-2xl font-black text-white mt-1" id="studentQuizTitle">Interactive Examination</h2>
+          <p class="text-xs text-slate-400">Complete both Multiple Choice and Short Answer questions, then submit for automated AI evaluation.</p>
+        </div>
+
+        <div class="flex items-center gap-4 text-xs font-mono">
+          <div class="p-3 rounded-2xl bg-slate-900 border border-white/10 text-center">
+            <span class="text-slate-400 block text-[10px]">Total Marks</span>
+            <span class="font-bold text-white text-base" id="studentTotalMarks">24</span>
+          </div>
+          <div class="p-3 rounded-2xl bg-slate-900 border border-white/10 text-center">
+            <span class="text-slate-400 block text-[10px]">Questions</span>
+            <span class="font-bold text-cyan-400 text-base" id="studentQuestionCount">10</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Questions Interactive Form -->
+      <div id="studentQuestionsList" class="space-y-4"></div>
+
+      <!-- Submit Action Bar -->
+      <div class="glass-card rounded-3xl p-6 flex items-center justify-between">
+        <span class="text-xs text-slate-400 font-mono">Ensure all conceptual and descriptive questions are answered before submitting.</span>
+        <button onclick="submitStudentAnswers()" id="submitQuizBtn" class="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:opacity-90 active:scale-95 text-white font-black text-xs font-mono uppercase tracking-wider shadow-lg shadow-emerald-500/25 transition flex items-center gap-2">
+          <i data-lucide="send" class="w-4 h-4"></i>
+          <span>Submit for Instant AI Auto-Grading</span>
+        </button>
+      </div>
+
+      <!-- Grading Results Section -->
+      <div id="gradingResultSection" class="hidden glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+        <div class="flex items-center justify-between pb-4 border-b border-white/10">
+          <div>
+            <h3 class="text-xl font-black text-white flex items-center gap-2">
+              <i data-lucide="award" class="w-6 h-6 text-yellow-400"></i>
+              AI Assessment Scorecard & Feedback Report
+            </h3>
+            <p class="text-xs text-slate-400 font-mono">Automated semantic comparison and rubrics evaluation completed.</p>
+          </div>
+          <div class="text-right">
+            <div class="text-3xl font-black text-emerald-400 font-mono" id="scoreDisplay">0.0 / 0.0</div>
+            <span class="text-xs font-bold text-slate-300 font-mono" id="gradeBadge">A (Excellent)</span>
+          </div>
+        </div>
+
+        <!-- AI Summary Alert Box -->
+        <div class="p-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-200 text-xs leading-relaxed font-mono" id="aiSummaryText">
+          Loading feedback summary...
+        </div>
+
+        <!-- Strengths vs Areas of Improvement -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+            <h4 class="text-xs font-bold text-emerald-400 uppercase font-mono mb-2 flex items-center gap-1.5">
+              <i data-lucide="check-circle" class="w-4 h-4"></i> Demonstrated Strengths
+            </h4>
+            <ul id="strengthsList" class="space-y-1.5 text-xs text-slate-200 font-medium"></ul>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20">
+            <h4 class="text-xs font-bold text-amber-400 uppercase font-mono mb-2 flex items-center gap-1.5">
+              <i data-lucide="alert-circle" class="w-4 h-4"></i> Priority Areas for Revision
+            </h4>
+            <ul id="improvementsList" class="space-y-1.5 text-xs text-slate-200 font-medium"></ul>
+          </div>
+        </div>
+
+        <!-- Itemized Breakdown -->
+        <div>
+          <h4 class="text-xs font-bold text-slate-300 uppercase font-mono mb-3">Itemized Question Evaluation</h4>
+          <div id="itemizedContainer" class="space-y-3"></div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    let activeQuiz = null;
+
+    function switchTab(tab) {
+      const vTeacher = document.getElementById('viewTeacher');
+      const vStudent = document.getElementById('viewStudent');
+      const bTeacher = document.getElementById('tabBtnTeacher');
+      const bStudent = document.getElementById('tabBtnStudent');
+
+      if (tab === 'teacher') {
+        vTeacher.classList.remove('hidden');
+        vStudent.classList.add('hidden');
+        bTeacher.className = 'px-4 py-2 rounded-xl transition flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md';
+        bStudent.className = 'px-4 py-2 rounded-xl transition flex items-center gap-2 text-slate-400 hover:text-white';
+      } else {
+        if (!activeQuiz) {
+          alert('Please synthesize or load a quiz in the Teacher Dashboard first!');
+          return;
+        }
+        vTeacher.classList.add('hidden');
+        vStudent.classList.remove('hidden');
+        bStudent.className = 'px-4 py-2 rounded-xl transition flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md';
+        bTeacher.className = 'px-4 py-2 rounded-xl transition flex items-center gap-2 text-slate-400 hover:text-white';
+        renderStudentQuestions();
+      }
+      lucide.createIcons();
+    }
+
+    async function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      document.getElementById('uploadStatusText').innerText = `Uploaded: ${file.name}`;
+      const topicInput = document.getElementById('topicInput');
+      if (!topicInput.value) {
+        topicInput.value = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+      }
+    }
+
+    async function generateQuiz() {
+      const text = document.getElementById('rawTextInput').value;
+      const fileInput = document.getElementById('pdfFileInput');
+      const topic = document.getElementById('topicInput').value;
+      const difficulty = document.getElementById('difficultyInput').value;
+      const mcqCount = document.getElementById('mcqCountInput').value;
+      const shortCount = document.getElementById('shortCountInput').value;
+      const apiKey = document.getElementById('apiKeyInput').value;
+
+      const btn = document.getElementById('generateBtn');
+      const btnText = document.getElementById('generateBtnText');
+
+      if (!text && (!fileInput.files || fileInput.files.length === 0)) {
+        alert('Please paste syllabus text or upload a chapter PDF document!');
+        return;
+      }
+
+      try {
+        btn.disabled = true;
+        btnText.innerText = 'Synthesizing 10 Questions with AI...';
+
+        let res;
+        if (fileInput.files && fileInput.files.length > 0) {
+          const formData = new FormData();
+          formData.append('file', fileInput.files[0]);
+          if (topic) formData.append('topic', topic);
+          formData.append('difficulty', difficulty);
+          formData.append('mcq_count', mcqCount);
+          formData.append('short_answer_count', shortCount);
+          formData.append('num_questions', parseInt(mcqCount) + parseInt(shortCount));
+          if (apiKey) formData.append('api_key', apiKey);
+
+          res = await fetch('/api/quiz-generator/generate-quiz', {
+            method: 'POST',
+            body: formData
+          });
+        } else {
+          res = await fetch('/api/quiz-generator/generate-quiz', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              text: text,
+              topic: topic,
+              difficulty: difficulty,
+              mcq_count: parseInt(mcqCount),
+              short_answer_count: parseInt(shortCount),
+              num_questions: parseInt(mcqCount) + parseInt(shortCount),
+              api_key: apiKey || null
+            })
+          });
+        }
+
+        const data = await res.json();
+        if (data.status === 'SUCCESS') {
+          activeQuiz = data.quiz;
+          renderQuizPreview(data.quiz);
+        } else {
+          alert('Generation error: ' + (data.detail || 'Failed to generate quiz'));
+        }
+      } catch (err) {
+        alert('Error connecting to backend: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btnText.innerText = 'Synthesize Balanced Assessment';
+        lucide.createIcons();
+      }
+    }
+
+    function renderQuizPreview(quiz) {
+      document.getElementById('previewQuizTitle').innerText = quiz.title;
+      document.getElementById('previewQuizMeta').innerText = `Topic: ${quiz.topic} • Total Marks: ${quiz.total_marks} • Difficulty: ${quiz.difficulty}`;
+      document.getElementById('quizPreviewSection').classList.remove('hidden');
+
+      const container = document.getElementById('questionsContainer');
+      container.innerHTML = '';
+
+      quiz.questions.forEach((q, idx) => {
+        const div = document.createElement('div');
+        div.className = 'p-5 rounded-2xl bg-slate-900/60 border border-white/10 space-y-3';
+
+        const isMcq = q.type === 'mcq';
+        div.innerHTML = `
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-cyan-400 font-mono">Q${idx + 1} • ${q.type.toUpperCase()}</span>
+            <span class="px-2 py-0.5 rounded bg-white/10 font-mono text-[11px] text-slate-300">${q.marks} Marks</span>
+          </div>
+          <p class="text-sm font-semibold text-white">${q.question}</p>
+          ${isMcq ? `
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
+              ${q.options.map((opt, oIdx) => `
+                <div class="p-2.5 rounded-xl ${opt.startsWith(q.correct_option) ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-slate-800/60 text-slate-300'}">
+                  ${opt}
+                </div>
+              `).join('')}
+            </div>
+            <p class="text-[11px] text-slate-400 font-mono mt-1"><b class="text-emerald-400">Explanation:</b> ${q.explanation || 'Based on syllabus.'}</p>
+          ` : `
+            <div class="p-3 rounded-xl bg-slate-800/50 text-xs font-mono text-slate-300">
+              <span class="text-purple-400 font-bold block mb-1">Expected Sample Answer:</span>
+              ${q.sample_answer || 'Complete analytical explanation expected.'}
+            </div>
+            <p class="text-[11px] text-slate-400 font-mono"><b class="text-cyan-400">Rubric:</b> ${q.grading_rubric || 'Full credit for covering key concepts.'}</p>
+          `}
+        `;
+        container.appendChild(div);
+      });
+      lucide.createIcons();
+    }
+
+    function saveAndPublishQuiz() {
+      if (!activeQuiz) return;
+      alert(`Assessment '${activeQuiz.title}' saved to catalog! Students can now take this quiz.`);
+      switchTab('student');
+    }
+
+    function renderStudentQuestions() {
+      if (!activeQuiz) return;
+
+      document.getElementById('studentQuizTitle').innerText = activeQuiz.title;
+      document.getElementById('studentTopicBadge').innerText = activeQuiz.topic;
+      document.getElementById('studentTotalMarks').innerText = activeQuiz.total_marks;
+      document.getElementById('studentQuestionCount').innerText = activeQuiz.questions.length;
+
+      const container = document.getElementById('studentQuestionsList');
+      container.innerHTML = '';
+
+      activeQuiz.questions.forEach((q, idx) => {
+        const div = document.createElement('div');
+        div.className = 'glass-card rounded-3xl p-6 space-y-3';
+
+        const isMcq = q.type === 'mcq';
+        div.innerHTML = `
+          <div class="flex items-center justify-between text-xs font-mono">
+            <span class="font-bold text-cyan-400">QUESTION ${idx + 1} OF ${activeQuiz.questions.length}</span>
+            <span class="text-slate-400">${q.type.toUpperCase()} • ${q.marks} Marks</span>
+          </div>
+          <h3 class="text-base font-bold text-white">${q.question}</h3>
+          ${isMcq ? `
+            <div class="space-y-2 mt-2">
+              ${q.options.map((opt, oIdx) => {
+                const optLetter = opt.charAt(0);
+                return `
+                  <label class="flex items-center gap-3 p-3 rounded-2xl bg-slate-900/60 hover:bg-slate-800/80 border border-white/10 hover:border-cyan-500/50 transition cursor-pointer text-xs font-mono">
+                    <input type="radio" name="student_q_${q.id}" value="${optLetter}" class="w-4 h-4 text-cyan-500 bg-slate-800 border-white/20 focus:ring-cyan-500">
+                    <span class="text-slate-200">${opt}</span>
+                  </label>
+                `;
+              }).join('')}
+            </div>
+          ` : `
+            <div class="mt-2">
+              <textarea id="student_text_${q.id}" rows="3" class="w-full rounded-2xl p-4 text-xs font-mono glass-input" placeholder="Type your 2 to 4 sentences descriptive answer here..."></textarea>
+            </div>
+          `}
+        `;
+        container.appendChild(div);
+      });
+      lucide.createIcons();
+    }
+
+    async function submitStudentAnswers() {
+      if (!activeQuiz) return;
+
+      const studentAnswers = {};
+      activeQuiz.questions.forEach((q) => {
+        if (q.type === 'mcq') {
+          const checked = document.querySelector(`input[name="student_q_${q.id}"]:checked`);
+          studentAnswers[q.id] = checked ? checked.value : '';
+        } else {
+          const el = document.getElementById(`student_text_${q.id}`);
+          studentAnswers[q.id] = el ? el.value : '';
+        }
+      });
+
+      const btn = document.getElementById('submitQuizBtn');
+      btn.disabled = true;
+      btn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Auto-Grading Answers with AI...`;
+      lucide.createIcons();
+
+      try {
+        const res = await fetch('/api/quiz-generator/grade-answers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            quiz: activeQuiz,
+            student_answers: studentAnswers,
+            api_key: document.getElementById('apiKeyInput').value || null
+          })
+        });
+
+        const data = await res.json();
+        if (data.status === 'GRADED') {
+          renderGradingReport(data.report);
+        } else {
+          alert('Grading error: ' + (data.detail || 'Failed to grade'));
+        }
+      } catch (err) {
+        alert('Grading error: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i> Submit for Instant AI Auto-Grading`;
+        lucide.createIcons();
+      }
+    }
+
+    function renderGradingReport(rep) {
+      const section = document.getElementById('gradingResultSection');
+      section.classList.remove('hidden');
+
+      document.getElementById('scoreDisplay').innerText = `${rep.total_score} / ${rep.max_score}`;
+      document.getElementById('gradeBadge').innerText = `${rep.percentage}% • ${rep.letter_grade}`;
+      document.getElementById('aiSummaryText').innerText = rep.personalized_feedback_summary;
+
+      const strengthsList = document.getElementById('strengthsList');
+      strengthsList.innerHTML = rep.strengths.map(s => `<li>• ${s}</li>`).join('');
+
+      const improvementsList = document.getElementById('improvementsList');
+      improvementsList.innerHTML = rep.areas_for_improvement.map(i => `<li>• ${i}</li>`).join('');
+
+      const itemized = document.getElementById('itemizedContainer');
+      itemized.innerHTML = rep.question_breakdown.map((item, idx) => {
+        const isCorrect = item.status === 'CORRECT' || item.status === 'STRONG' || item.status === 'EXCELLENT';
+        const isPartial = item.status === 'PARTIAL';
+        const color = isCorrect ? 'text-emerald-400 border-emerald-500/30' : (isPartial ? 'text-amber-400 border-amber-500/30' : 'text-rose-400 border-rose-500/30');
+
+        return `
+          <div class="p-4 rounded-2xl bg-slate-900/70 border border-white/10 space-y-2 text-xs font-mono">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-white">Q${idx + 1} (${item.type.toUpperCase()}): ${item.question}</span>
+              <span class="font-bold px-2 py-0.5 rounded border ${color}">${item.marks_earned} / ${item.marks_possible} Marks</span>
+            </div>
+            <div class="p-2.5 rounded-xl bg-black/40 text-slate-300">
+              <span class="text-slate-400 block font-bold mb-0.5">Your Submission:</span>
+              ${item.student_answer}
+            </div>
+            ${item.type === 'mcq' ? `
+              <div class="text-[11px] text-slate-400">
+                Correct Option: <b class="text-emerald-400">${item.correct_answer}</b> • ${item.explanation}
+              </div>
+            ` : `
+              <div class="text-[11px] text-slate-400">
+                Sample Answer: <span class="text-slate-300">${item.sample_answer}</span>
+              </div>
+            `}
+            <div class="text-[11px] ${color} pt-1">
+              Feedback: ${item.feedback}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      section.scrollIntoView({ behavior: 'smooth' });
+      lucide.createIcons();
+    }
+
+    window.onload = () => {
+      lucide.createIcons();
+    };
+  </script>
+</body>
+</html>
+
