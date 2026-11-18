@@ -2,6 +2,12 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
+import { setupMockServiceWorker } from './mockService'
+
+// Initialize autonomous client-side offline mock engine
+// Enables 100% of features (Login, Exams, MCQ, Coding, Viva, Reports, Admin)
+// to run completely standalone on any live static hosting without needing a backend server!
+setupMockServiceWorker();
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
